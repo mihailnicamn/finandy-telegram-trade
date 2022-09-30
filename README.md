@@ -21,13 +21,13 @@
 
 ## Example of my set
 **entry**
-![entry](cost-average&entry.png)
+![entry](screenshots/cost-average&entry.png)
 **exit/reversal**
-![close&reversal](close&reversal.png)
+![close&reversal](screenshots/close&reversal.png)
 **trailing stop loss**
-![trailing-stop](trailing-stop.png)
+![trailing-stop](screenshots/trailing-stop.png)
 **take profit**
-![take-profit](take-profit.png)
+![take-profit](screenshots/take-profit.png)
 
 ### Under construction 
 
