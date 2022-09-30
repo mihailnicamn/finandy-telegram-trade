@@ -1,0 +1,7 @@
+{
+    "signal1":{
+        "url":"finandy url",
+        "name":"finandy signal name",
+        "secret":"finandy signal secret"
+    }
+}

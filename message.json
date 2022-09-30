@@ -1,0 +1,16 @@
+{
+    "name": "Telegram",
+    "secret": "fuqwcncm6jg",
+    "side": "{{strategy.order.action}}",
+    "symbol": "{{ticker}}",
+    "open": {
+      "amountType": "balance",
+      "amount": "{{strategy.order.contracts}}"
+    },
+    "scaled": {
+      "price1": {
+        "mode": "value",
+        "value": ""
+      }
+    }
+  }

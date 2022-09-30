@@ -1,0 +1,159 @@
+<script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+<script src="https://getbootstrap.com/docs/4.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    Array.prototype.move = function (from, to) {
+  this.splice(to, 0, this.splice(from, 1)[0]);
+};
+    //----------------------------------------------------------------------
+    $(document).ready(function() {
+        console.log("ready")
+            //add_command_button();
+        $("#commandFlowUploadHelper").hide();
+
+        load_command_elements();
+    });
+    $(function() {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+        //----------------------------------------------------------------------
+    function update_command_count(count) {
+        console.log("update_command_count:" + count);
+        $(".command_count").text(count)
+    }
+    //----------------------------------------------------------------------
+    function add_defaults() {
+        signal = '<li class="list-group-item d-flex justify-content-between bg-light"><div class="text-success"> <h6 class="my-0">Select Signal</h6> <small>Signal Name</small> </div> <span class="btn btn-success" data-toggle="modal" data-target="#add_signal_modal">Update Signal</span> </li>';
+        $(document).find(".command_elem_list").append(signal);
+        add_command_button()
+    }
+
+    function add_command_button() {
+        addCommand = '<li class="list-group-item d-flex justify-content-between bg-light"> <span class="btn btn-primary btn-block"  data-toggle="modal" data-target="#add_command_modal">Add Command</span> </li>';
+        $(document).find(".command_elem_list").append(addCommand);
+
+    }
+    //----------------------------------------------------------------------
+    function clear_commands() {
+        $(document).find(".command_elem_list").empty();
+        update_command_count(0);
+    }
+
+    function clearCommandFlow() {
+        localStorage.removeItem("command_elements");
+        localStorage.setItem("command_elements", JSON.stringify([{ "name": "Open New Trade", "options": "use the keyword 'trade' to declare a new entry" }]));
+        load_command_elements();
+    }
+    //----------------------------------------------------------------------
+    function load_command_elements() {
+        elements = read_command_elements();
+        clear_commands();
+        for (var i = 0; i < elements.length; i++) {
+            console.log("load_command_elements:" + elements[i]);
+            if (i == 0) {
+
+            
+                $(".command_elem_list").append('<li class="list-group-item d-flex justify-content-between lh-condensed"><div><h6 class="my-0">' + elements[i].name + '</h6><small class="text-muted">' + elements[i].options + '</small></div><span class="text-muted"></span></li>')
+            } else {
+                if(i==1){
+                    $(".command_elem_list").append('<li class="list-group-item d-flex justify-content-between lh-condensed"><div><h6 class="my-0">' + elements[i].name + '</h6><small class="text-muted">' + elements[i].options + '</small></div><span class="text-muted"><button class="btn btn-primary btn-sm ml-2" onclick="moveDownElement(' + i + ')"  data-toggle="tooltip" data-placement="top" title="Move Down"><i class="fa-solid fa-arrow-down"></i></button><button class="btn btn-sm btn-danger ml-2" onclick="removeElement(' + i + ')"  data-toggle="tooltip" data-placement="top" title="Remove From Flow"><i class="fa-solid fa-trash" ></i></button></span></li>')
+                }else if(i==elements.length-1){
+                    $(".command_elem_list").append('<li class="list-group-item d-flex justify-content-between lh-condensed"><div><h6 class="my-0">' + elements[i].name + '</h6><small class="text-muted">' + elements[i].options + '</small></div><span class="text-muted"><button class="btn btn-primary btn-sm ml-2" onclick="moveUpElement(' + i + ')"  data-toggle="tooltip" data-placement="top" title="Move Up"><i class="fa-solid fa-arrow-up" ></i></button><button class="btn btn-sm btn-danger ml-2" onclick="removeElement(' + i + ')"  data-toggle="tooltip" data-placement="top" title="Remove From Flow"><i class="fa-solid fa-trash" ></i></button></span></li>')
+                }else{
+                $(".command_elem_list").append('<li class="list-group-item d-flex justify-content-between lh-condensed"><div><h6 class="my-0">' + elements[i].name + '</h6><small class="text-muted">' + elements[i].options + '</small></div><span class="text-muted"><button class="btn btn-primary btn-sm ml-2" onclick="moveUpElement(' + i + ')"  data-toggle="tooltip" data-placement="top" title="Move Up"><i class="fa-solid fa-arrow-up" ></i></button><button class="btn btn-primary btn-sm ml-2" onclick="moveDownElement(' + i + ')"  data-toggle="tooltip" data-placement="top" title="Move Down"><i class="fa-solid fa-arrow-down"></i></button><button class="btn btn-sm btn-danger ml-2" onclick="removeElement(' + i + ')"  data-toggle="tooltip" data-placement="top" title="Remove From Flow"><i class="fa-solid fa-trash" ></i></button></span></li>')
+            }
+            }
+        }
+        add_defaults();
+        update_command_count(elements.length -1);
+    }
+    function moveUpElement(i){
+        var elements = localStorage.getItem("command_elements");
+        elements = JSON.parse(elements);
+        elements.move(i,(i-1))
+        localStorage.setItem("command_elements", JSON.stringify(elements));
+        load_command_elements();
+    }
+    function moveDownElement(i){
+        var elements = localStorage.getItem("command_elements");
+        elements = JSON.parse(elements);
+        elements.move(i,(i+1))
+        localStorage.setItem("command_elements", JSON.stringify(elements));
+        load_command_elements();
+    }
+    //----------------------------------------------------------------------
+    function add_new_element(data) {
+        var savedData = localStorage.getItem("command_elements");
+        var elements = JSON.parse(savedData);
+        if (elements == null) {
+            elements = [];
+        }
+        elements.push(data);
+        localStorage.setItem("command_elements", JSON.stringify(elements));
+
+        load_command_elements();
+    }
+
+    function read_command_elements() {
+        var savedData = localStorage.getItem("command_elements");
+        var elements = JSON.parse(savedData);
+        if (elements == null) {
+            elements = [];
+        }
+        return elements;
+    }
+    //----------------------------------------------------------------------
+    function downloadCommandFlow() {
+        var savedData = localStorage.getItem("command_elements");
+        var elements = JSON.parse(savedData);
+        if (elements == null) {
+            elements = [];
+        }
+        var data = JSON.stringify(elements);
+        var blob = new Blob([data], {
+            type: "application/json"
+        });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.download = "command_flow.json";
+        a.href = url;
+        a.textContent = "Download command_flow.json";
+        a.click();
+    }
+
+    function uploadCommandFlow() {
+        $("#commandFlowUploadHelper").click();
+    }
+
+    function readTextFile(file, callback) {
+        var rawFile = new XMLHttpRequest();
+        rawFile.overrideMimeType("application/json");
+        rawFile.open("GET", file, true);
+        rawFile.onreadystatechange = function() {
+            if (rawFile.readyState === 4 && rawFile.status == "200") {
+                callback(rawFile.responseText);
+            }
+        }
+        rawFile.send(null);
+    }
+    $("#commandFlowUploadHelper").on('change', function(e) {
+        var file = e.target.files[0];
+        var path = (window.URL || window.webkitURL).createObjectURL(file);
+        readTextFile(path, function(text) {
+            var data = JSON.parse(text);
+            localStorage.setItem("command_elements", JSON.stringify(data));
+
+            load_command_elements();
+        });
+    });
+    //----------------------------------------------------------------------
+    function removeElement(index) {
+        var savedData = localStorage.getItem("command_elements");
+        var elements = JSON.parse(savedData);
+        if (elements == null) {
+            elements = [];
+        }
+        elements.splice(index, 1);
+        localStorage.setItem("command_elements", JSON.stringify(elements));
+        load_command_elements();
+    }
+</script>

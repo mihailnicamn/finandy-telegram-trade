@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('elements/header.ejs'); %>
+</head>
+<body class="container">
+
+<main>
+    <%- include('elements/commands_form.ejs'); %>
+</main>
+
+<footer>
+  <%- include('elements/footer.ejs'); %>
+</footer>
+<input type="file" id="commandFlowUploadHelper" style="display: none;" accept=".json"/>
+<%- include('modals/add_command.ejs'); %>
+<%- include('modals/add_signal.ejs'); %>
+<%- include('elements/js.ejs'); %>
+</body>
+</html>
